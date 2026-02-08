@@ -1,0 +1,478 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Vedic Time Digital Clock</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      text-align: center;
+      padding-top: 50px;
+    }
+
+    .box {
+      display: inline-block;
+      padding: 20px 30px 28px;
+      border-radius: 12px;
+      background: #020617;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+      max-width: 92vw;
+    }
+
+    h1 {
+      color: #facc15;
+      margin-bottom: 10px;
+    }
+
+    .time {
+      font-size: 1.6rem;
+      margin: 8px 0;
+    }
+
+    .small {
+      font-size: 1rem;
+      color: #cbd5f5;
+      margin-top: 15px;
+      line-height: 1.5;
+    }
+
+    .clock-wrap {
+      margin-top: 26px;
+    }
+
+    .vedic-clock {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 0 auto;
+      border-radius: 50%;
+      border: 3px solid #facc15;
+      background:
+        radial-gradient(circle at center, #0b1120 0 35%, #111c33 36% 72%, #0a1428 73% 100%);
+      box-shadow:
+        inset 0 0 26px rgba(250, 204, 21, 0.14),
+        0 0 20px rgba(56, 189, 248, 0.14);
+    }
+
+    .clock-title {
+      margin-top: 10px;
+      color: #e2e8f0;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .tick-layer {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+    }
+
+    .label-layer {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .tick {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 2px;
+      border-radius: 2px;
+      transform-origin: center center;
+    }
+
+    .tick.outer {
+      background: rgba(250, 204, 21, 0.7);
+    }
+
+    .tick.inner {
+      background: rgba(56, 189, 248, 0.6);
+    }
+
+    .dial-label {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-origin: center center;
+      white-space: nowrap;
+      font-size: 0.65rem;
+      font-weight: 700;
+      line-height: 1;
+      text-shadow: 0 0 6px rgba(2, 6, 23, 0.95);
+    }
+
+    .dial-label.muhurta {
+      color: #fde047;
+      font-size: 0.62rem;
+    }
+
+    .dial-label.kala {
+      color: #7dd3fc;
+      font-size: 0.56rem;
+    }
+
+    .dial-label.kastha {
+      color: #fb923c;
+      font-size: 0.54rem;
+    }
+
+    .dial-label.nimesha {
+      color: #6ee7b7;
+      font-size: 0.58rem;
+    }
+
+    .center-dot {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #f8fafc;
+      box-shadow: 0 0 10px rgba(248, 250, 252, 0.7);
+      z-index: 8;
+    }
+
+    .hand {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      transform-origin: bottom center;
+      transform: translateX(-50%) rotate(0deg);
+      border-radius: 8px;
+      z-index: 5;
+    }
+
+    .hand.muhurta {
+      width: 6px;
+      height: 86px;
+      background: #facc15;
+    }
+
+    .hand.kala {
+      width: 4px;
+      height: 108px;
+      background: #38bdf8;
+    }
+
+    .hand.kastha {
+      width: 3px;
+      height: 126px;
+      background: #f97316;
+    }
+
+    .hand.nimesha {
+      width: 2px;
+      height: 68px;
+      background: #34d399;
+      z-index: 6;
+    }
+
+    .dial-readout {
+      margin-top: 12px;
+      color: #cbd5f5;
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+
+    .vedic15-wrap {
+      margin-top: 26px;
+    }
+
+    .vedic15-clock {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 0 auto;
+      border-radius: 50%;
+      border: 3px solid #22d3ee;
+      background:
+        radial-gradient(circle at center, #081018 0 40%, #0c1a2e 41% 76%, #081422 77% 100%);
+      box-shadow:
+        inset 0 0 22px rgba(34, 211, 238, 0.18),
+        0 0 20px rgba(34, 211, 238, 0.12);
+    }
+
+    .vedic15-title {
+      margin-top: 10px;
+      color: #dbeafe;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .vedic15-hand {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      transform-origin: bottom center;
+      transform: translateX(-50%) rotate(0deg);
+      border-radius: 8px;
+      z-index: 5;
+    }
+
+    .vedic15-hand.hour {
+      width: 6px;
+      height: 82px;
+      background: #facc15;
+    }
+
+    .vedic15-hand.kala {
+      width: 4px;
+      height: 110px;
+      background: #38bdf8;
+    }
+
+    .vedic15-hand.kastha {
+      width: 3px;
+      height: 126px;
+      background: #fb923c;
+    }
+
+    .vedic15-hand.nimesha {
+      width: 2px;
+      height: 72px;
+      background: #6ee7b7;
+      z-index: 6;
+    }
+
+    .dial-label.hour15 {
+      color: #fef08a;
+      font-size: 0.72rem;
+    }
+
+    @media (max-width: 520px) {
+      .vedic-clock {
+        width: 260px;
+        height: 260px;
+      }
+
+      .vedic15-clock {
+        width: 260px;
+        height: 260px;
+      }
+
+      .hand.muhurta {
+        height: 72px;
+      }
+
+      .hand.kala {
+        height: 94px;
+      }
+
+      .hand.kastha {
+        height: 108px;
+      }
+
+      .hand.nimesha {
+        height: 58px;
+      }
+
+      .vedic15-hand.hour {
+        height: 68px;
+      }
+
+      .vedic15-hand.kala {
+        height: 92px;
+      }
+
+      .vedic15-hand.kastha {
+        height: 106px;
+      }
+
+      .vedic15-hand.nimesha {
+        height: 58px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h1>🕉️ Vedic Time Clock</h1>
+
+    <div class="time" id="vedicTime">Loading...</div>
+    <div class="small" id="normalTime"></div>
+
+    <div class="clock-wrap">
+      <div class="vedic-clock" aria-label="Circular Vedic Clock">
+        <div class="tick-layer" id="outerTicks"></div>
+        <div class="tick-layer" id="innerTicks"></div>
+        <div class="label-layer" id="muhurtaLabels"></div>
+        <div class="label-layer" id="kalaLabels"></div>
+        <div class="label-layer" id="kasthaLabels"></div>
+        <div class="label-layer" id="nimeshaLabels"></div>
+
+        <div class="hand muhurta" id="muhurtaHand"></div>
+        <div class="hand kala" id="kalaHand"></div>
+        <div class="hand kastha" id="kasthaHand"></div>
+        <div class="hand nimesha" id="nimeshaHand"></div>
+
+        <div class="center-dot"></div>
+      </div>
+      <div class="clock-title">Circular Vedic Dial</div>
+      <div class="dial-readout" id="dialReadout"></div>
+    </div>
+
+    <div class="vedic15-wrap">
+      <div class="vedic15-clock" aria-label="15-Muhurta Analog Clock">
+        <div class="tick-layer" id="vedic15Ticks"></div>
+        <div class="label-layer" id="vedic15HourLabels"></div>
+        <div class="label-layer" id="vedic15KalaLabels"></div>
+        <div class="label-layer" id="vedic15KasthaLabels"></div>
+        <div class="label-layer" id="vedic15NimeshaLabels"></div>
+
+        <div class="vedic15-hand hour" id="vedic15HourHand"></div>
+        <div class="vedic15-hand kala" id="vedic15KalaHand"></div>
+        <div class="vedic15-hand kastha" id="vedic15KasthaHand"></div>
+        <div class="vedic15-hand nimesha" id="vedic15NimeshaHand"></div>
+
+        <div class="center-dot"></div>
+      </div>
+      <div class="vedic15-title">Normal Style Vedic Analog (1-15)</div>
+    </div>
+
+    <div class="small">
+      1 Day = 30 Muhurta (15 AM + 15 PM)<br>
+      1 Muhurta = 30 Kala<br>
+      1 Kala = 30 Kastha<br>
+      1 Kastha = 18 Nimesha
+    </div>
+  </div>
+
+  <script>
+    function createTicks(containerId, count, radius, majorEvery, outer) {
+      const layer = document.getElementById(containerId);
+
+      for (let i = 0; i < count; i++) {
+        const tick = document.createElement("div");
+        const isMajor = i % majorEvery === 0;
+        const angle = (360 / count) * i;
+        const length = isMajor ? (outer ? 16 : 12) : (outer ? 9 : 7);
+
+        tick.className = `tick ${outer ? "outer" : "inner"}`;
+        tick.style.height = `${length}px`;
+        tick.style.transform =
+          `translate(-50%, -50%) rotate(${angle}deg) translateY(-${radius}px)`;
+
+        layer.appendChild(tick);
+      }
+    }
+
+    function createLabels(containerId, count, radius, labelClass) {
+      const layer = document.getElementById(containerId);
+
+      for (let i = 0; i < count; i++) {
+        const label = document.createElement("div");
+        const value = i + 1;
+        const angle = (360 / count) * i;
+
+        label.className = `dial-label ${labelClass}`;
+        label.innerText = String(value);
+        label.style.transform =
+          `translate(-50%, -50%) rotate(${angle}deg) translateY(-${radius}px) rotate(-${angle}deg)`;
+
+        layer.appendChild(label);
+      }
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const pad2 = (num) => String(num).padStart(2, "0");
+
+      const normalTimeStr = now.toLocaleTimeString();
+
+      const secondsSinceMidnight =
+        now.getHours() * 3600 +
+        now.getMinutes() * 60 +
+        now.getSeconds() +
+        now.getMilliseconds() / 1000;
+
+      const secondsPerDay = 86400;
+      const secondsPerMuh = secondsPerDay / 30; // 2880
+      const secondsPerKala = secondsPerMuh / 30; // 96
+      const secondsPerKastha = secondsPerKala / 30; // 3.2
+      const secondsPerNimesha = secondsPerKastha / 18;
+
+      let remaining = secondsSinceMidnight;
+
+      const muhurtaProgress = remaining / secondsPerMuh;
+      const muh = Math.floor(muhurtaProgress) + 1;
+      remaining = remaining % secondsPerMuh;
+
+      const kalaProgress = remaining / secondsPerKala;
+      const kala = Math.floor(kalaProgress) + 1;
+      remaining = remaining % secondsPerKala;
+
+      const kasthaProgress = remaining / secondsPerKastha;
+      const kastha = Math.floor(kasthaProgress) + 1;
+      remaining = remaining % secondsPerKastha;
+
+      const nimeshaProgress = remaining / secondsPerNimesha;
+      const nimesha = Math.floor(nimeshaProgress) + 1;
+
+      const vedicPeriod = muh <= 15 ? "AM" : "PM";
+      const vedicMuhurta = muh <= 15 ? muh : muh - 15;
+
+      const vedicTimeStr =
+        `${pad2(vedicMuhurta)}:${pad2(kala)}:${pad2(kastha)}:${pad2(nimesha)} ${vedicPeriod}`;
+
+      document.getElementById("vedicTime").innerText =
+        "Vedic Time: " + vedicTimeStr;
+      document.getElementById("normalTime").innerText =
+        "Normal Time: " + normalTimeStr;
+
+      document.getElementById("dialReadout").innerText =
+        `Dials -> Muhurta: ${muh}/30, Kala: ${kala}/30, Kastha: ${kastha}/30, Nimesha: ${nimesha}/18`;
+
+      const muhurtaAngle = (muhurtaProgress / 30) * 360;
+      const kalaAngle = (kalaProgress / 30) * 360;
+      const kasthaAngle = (kasthaProgress / 30) * 360;
+      const nimeshaAngle = (nimeshaProgress / 18) * 360;
+
+      document.getElementById("muhurtaHand").style.transform =
+        `translateX(-50%) rotate(${muhurtaAngle}deg)`;
+      document.getElementById("kalaHand").style.transform =
+        `translateX(-50%) rotate(${kalaAngle}deg)`;
+      document.getElementById("kasthaHand").style.transform =
+        `translateX(-50%) rotate(${kasthaAngle}deg)`;
+      document.getElementById("nimeshaHand").style.transform =
+        `translateX(-50%) rotate(${nimeshaAngle}deg)`;
+
+      const muhurta15Progress = muhurtaProgress % 15;
+      const muhurta15Angle = (muhurta15Progress / 15) * 360;
+
+      document.getElementById("vedic15HourHand").style.transform =
+        `translateX(-50%) rotate(${muhurta15Angle}deg)`;
+      document.getElementById("vedic15KalaHand").style.transform =
+        `translateX(-50%) rotate(${kalaAngle}deg)`;
+      document.getElementById("vedic15KasthaHand").style.transform =
+        `translateX(-50%) rotate(${kasthaAngle}deg)`;
+      document.getElementById("vedic15NimeshaHand").style.transform =
+        `translateX(-50%) rotate(${nimeshaAngle}deg)`;
+    }
+
+    createTicks("outerTicks", 30, 138, 5, true);
+    createTicks("innerTicks", 18, 102, 3, false);
+    createLabels("muhurtaLabels", 30, 132, "muhurta");
+    createLabels("kalaLabels", 30, 116, "kala");
+    createLabels("kasthaLabels", 30, 98, "kastha");
+    createLabels("nimeshaLabels", 18, 80, "nimesha");
+    createTicks("vedic15Ticks", 30, 138, 2, false);
+    createLabels("vedic15HourLabels", 15, 118, "hour15");
+    createLabels("vedic15KalaLabels", 30, 100, "kala");
+    createLabels("vedic15KasthaLabels", 30, 84, "kastha");
+    createLabels("vedic15NimeshaLabels", 18, 68, "nimesha");
+
+    setInterval(updateClock, 100);
+    updateClock();
+  </script>
+
+</body>
+</html>
